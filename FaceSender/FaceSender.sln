@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaceSender", "FaceSender\FaceSender.csproj", "{C31C7634-5CDC-4108-A66D-7A4F2D8A910A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C31C7634-5CDC-4108-A66D-7A4F2D8A910A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C31C7634-5CDC-4108-A66D-7A4F2D8A910A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C31C7634-5CDC-4108-A66D-7A4F2D8A910A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C31C7634-5CDC-4108-A66D-7A4F2D8A910A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB12A210-3AB8-4F59-A764-CFE0F0489BFD}
+	EndGlobalSection
+EndGlobal
