@@ -27,7 +27,7 @@ namespace FaceSender
                 return new BadRequestObjectResult("Received data invalid");
             }
 
-            orderData.PartitionKey = System.DateTime.UtcNow.ToShortDateString();
+            orderData.PartitionKey = System.DateTime.UtcNow.DayOfYear.ToString();
             orderData.RowKey = orderData.FileName;
             ordersTable.Add(orderData);
             return (ActionResult)new OkObjectResult($"Order processed");
