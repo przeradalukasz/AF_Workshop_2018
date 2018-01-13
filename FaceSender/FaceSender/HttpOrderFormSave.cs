@@ -31,7 +31,7 @@ namespace FaceSender
                     return new BadRequestObjectResult("Received data invalid");
                 }
 
-                orderData.PartitionKey = System.DateTime.UtcNow.ToShortDateString();
+                orderData.PartitionKey = System.DateTime.UtcNow.DayOfYear.ToString();
                 orderData.RowKey = orderData.FileName;
                 log.Info("assign keys");
                 ordersTable.Add(orderData);
