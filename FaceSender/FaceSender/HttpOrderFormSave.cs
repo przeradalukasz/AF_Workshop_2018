@@ -16,21 +16,34 @@ namespace FaceSender
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]HttpRequest req, 
             [Table("Orders", Connection = "OrdersTableConn")]ICollector<PhotoOrder> ordersTable, TraceWriter log)
         {
-            PhotoOrder orderData = null;
             try
             {
-                string requestBody = new StreamReader(req.Body).ReadToEnd();
-                orderData = JsonConvert.DeserializeObject<PhotoOrder>(requestBody);
+                PhotoOrder orderData = null;
+                log.Info("PhotoOrder orderData = null");
+                try
+                {
+                    string requestBody = new StreamReader(req.Body).ReadToEnd();
+                    orderData = JsonConvert.DeserializeObject<PhotoOrder>(requestBody);
+                    log.Info("deser");
+                }
+                catch (System.Exception)
+                {
+                    return new BadRequestObjectResult("Received data invalid");
+                }
+
+                orderData.PartitionKey = System.DateTime.UtcNow.ToShortDateString();
+                orderData.RowKey = orderData.FileName;
+                log.Info("assign keys");
+                ordersTable.Add(orderData);
+                log.Info("add order");
+                return (ActionResult)new OkObjectResult($"Order processed");
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                log.Info(ex.Message);
                 return new BadRequestObjectResult("Received data invalid");
             }
-
-            orderData.PartitionKey = System.DateTime.UtcNow.ToShortDateString();
-            orderData.RowKey = orderData.FileName;
-            ordersTable.Add(orderData);
-            return (ActionResult)new OkObjectResult($"Order processed");
+            
         }
     }
 
