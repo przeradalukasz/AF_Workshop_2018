@@ -6,13 +6,15 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace FaceSender
 {
     public static class HttpOrderFormSave
     {
         [FunctionName("HttpOrderFormSave")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]HttpRequest req, TraceWriter log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]HttpRequest req, 
+            [Table("Orders", Connection = "OrdersTableConn")]ICollector<PhotoOrder> ordersTable, TraceWriter log)
         {
             PhotoOrder orderData = null;
             try
@@ -24,11 +26,15 @@ namespace FaceSender
             {
                 return new BadRequestObjectResult("Received data invalid");
             }
+
+            orderData.PartitionKey = System.DateTime.UtcNow.ToShortDateString();
+            orderData.RowKey = orderData.FileName;
+            ordersTable.Add(orderData);
             return (ActionResult)new OkObjectResult($"Order processed");
         }
     }
 
-    public class PhotoOrder
+    public class PhotoOrder : TableEntity
     {
         public string CustomerEmail { get; set; }
         public string FileName { get; set; }
@@ -36,3 +42,5 @@ namespace FaceSender
         public int RequiredWidth { get; set; }
     }
 }
+
+
