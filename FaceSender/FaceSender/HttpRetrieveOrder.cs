@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -15,20 +16,20 @@ namespace FaceSender
             [Table("Orders", Connection = "OrdersTableConn")]CloudTable ordersTable, TraceWriter log)
         {
             string fileName = req.Query["fileName"];
-            CloudTableClient tableClient = ordersTable.ServiceClient;
-            CloudTable table = tableClient.GetTableReference(ordersTable.Name);
+            if (string.IsNullOrWhiteSpace(fileName))
+                return new BadRequestResult();
             TableQuery<PhotoOrder> query = new TableQuery<PhotoOrder>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, fileName));
-            TableContinuationToken continuationToken = null;
-            TableQuerySegment<PhotoOrder> tableQueryResult = await table.ExecuteQuerySegmentedAsync(query, continuationToken);
+            TableQuerySegment<PhotoOrder> tableQueryResult = await ordersTable.ExecuteQuerySegmentedAsync(query, null);
             var resultList = tableQueryResult.Results;
 
-            if (resultList.Count > 0)
-            {                
+            if (resultList.Any())
+            {
+                var firstElement = resultList.First();
                 return new JsonResult(new {
-                    resultList[0].CustomerEmail,
-                    resultList[0].FileName,
-                    resultList[0].RequiredHeight,
-                    resultList[0].RequiredWidth
+                    firstElement.CustomerEmail,
+                    firstElement.FileName,
+                    firstElement.RequiredHeight,
+                    firstElement.RequiredWidth
                 });
             }
 
