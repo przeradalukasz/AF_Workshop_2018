@@ -13,7 +13,9 @@ namespace FaceSender
     public static class HttpGetSharedAccessSignatureForBlob
     {
         [FunctionName("HttpGetSharedAccessSignatureForBlob")]
-        public static async System.Threading.Tasks.Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, [Blob("doneorders", FileAccess.Read, Connection = "PhotoBlobConn")]CloudBlobContainer photosContainer, TraceWriter log)
+        public static async System.Threading.Tasks.Task<IActionResult> RunAsync([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, 
+            [Blob("doneorders", FileAccess.Read, Connection = "StorageConnection")]CloudBlobContainer photosContainer, 
+            TraceWriter log)
         {
             string fileName = req.Query["fileName"];
             if (string.IsNullOrWhiteSpace(fileName))

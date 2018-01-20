@@ -14,7 +14,7 @@ namespace FaceSender
     {
         [FunctionName("HttpOrderFormSave")]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]HttpRequest req,
-            [Table("Orders", Connection = "OrdersTableConn")]ICollector<PhotoOrder> ordersTable, TraceWriter log)
+            [Table("Orders", Connection = "StorageConnection")]ICollector<PhotoOrder> ordersTable, TraceWriter log)
         {
             try
             {
