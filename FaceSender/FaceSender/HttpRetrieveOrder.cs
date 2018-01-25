@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace FaceSender
 {
@@ -25,12 +26,20 @@ namespace FaceSender
             if (resultList.Any())
             {
                 var firstElement = resultList.First();
-                return new JsonResult(new {
-                    firstElement.CustomerEmail,
-                    firstElement.FileName,
-                    firstElement.RequiredHeight,
-                    firstElement.RequiredWidth
-                });
+                string[] resulotions = firstElement.Resolutions.Split(',');
+                List<PictureResizeRequest> requests = new List<PictureResizeRequest>();
+
+                foreach (var resolution in resulotions)
+                {
+                    string[] resParams = resolution.Split('x');
+                    requests.Add(new PictureResizeRequest()
+                    {
+                        FileName = firstElement.FileName,
+                        RequiredWidth = System.Int32.Parse(resParams[0]),
+                        RequiredHeight = System.Int32.Parse(resParams[1])
+                    });
+                }
+                return new JsonResult(new { requests, firstElement.CustomerEmail });
             }
 
             return new NotFoundResult();
