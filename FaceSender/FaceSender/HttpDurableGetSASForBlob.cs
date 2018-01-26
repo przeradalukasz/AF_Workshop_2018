@@ -1,21 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace FaceSender
 {
     public static class HttpDurableGetSASForBlob
     {
         [FunctionName("HttpDurableGetSASForBlob")]
-        public static async Task<string> RunOrchestrator2(
+        public static async Task<string> RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
             var resizedPicturesNames = context.GetInput<List<string>>();
@@ -31,9 +30,9 @@ namespace FaceSender
             await Task.WhenAll(tasks);
 
             string uri = "";
-            for (int i = 0; i < tasks.Length; i++)
+            foreach (var task in tasks)
             {
-                uri += tasks[i].Result + " ";
+                uri += task.Result + " ";
             }
             return uri;
         }

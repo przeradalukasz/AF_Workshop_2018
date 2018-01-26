@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
@@ -12,6 +6,9 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace FaceSender
 {
@@ -70,14 +67,12 @@ namespace FaceSender
             TraceWriter log)
         {
             var content = req.Content;
-            string jsonContent = content.ReadAsStringAsync().Result;
+            string jsonContent = await content.ReadAsStringAsync();
             dynamic pictureResizeRequests = JsonConvert.DeserializeObject<PictureResizeRequest[]>(jsonContent);
 
             string instanceId = await starter.StartNewAsync("HttpDurableResizePicture", pictureResizeRequests);
 
-            var res = starter.CreateCheckStatusResponse(req, instanceId);
-            res.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromSeconds(10));
-            return res;
+            return starter.CreateCheckStatusResponse(req, instanceId);
         }
 
         private static void SetAttachmentAsContentDisposition(ICloudBlob resizedPhotoCloudBlob,
